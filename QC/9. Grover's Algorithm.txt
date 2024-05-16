@@ -1,0 +1,60 @@
+9. Grover's Algorithm
+#importing libraries
+from qiskit import *
+from qiskit.visualization import *
+from math import pi, sqrt, pow
+from qiskit.circuit.library import MCMT
+sim = Aer.get_backend('aer_simulator')
+
+def diffuser(nqubits):
+    qc = QuantumCircuit(n)
+    for qubit in range(nqubits):
+        qc.h(qubit)
+    for qubit in range(nqubits):
+        qc.x(qubit)
+    cnz = MCMT('z', num_ctrl_qubits = nqubits-1, num_target_qubits=1)
+    qc=qc.compose(cnz)
+    for qubit in range(nqubits):
+        qc.x(qubit)
+    qc.x(0)
+    qc.z(0)
+    qc.x(0)
+    qc.z(0)
+
+    for qubit in range(nqubits):
+        qc.h(qubit)
+        U_s = qc.to_gate()
+        U_s.name = 'U$s$'
+        return U_s
+
+n=6
+
+oracle = QuantumCircuit(n+1)
+oracle.cx(1,n)
+oracle.cx(0,n) #string is 110000
+oracle_exn = oracle.to_gate()
+oracle_exn.name = "U$_\omega$"
+
+
+
+qc = QuantumCircuit(n+1,n)
+qc.x(n)
+
+for qubit in range(n+1):
+    qc.h(qubit)
+
+itr = int(pi*sqrt(pow(pow(2,n),0.5))/4-0.5)
+for i in range(itr):
+    qc = qc.compose(oracle_exn)
+    qc = qc.compose(diffuser(n))
+for qubit in range(n):
+    qc.h(qubit)
+for i in range(n):
+    qc.measure(i,i)
+display(qc.draw())
+
+transpiled_grover_circuit = transpile(qc, sim)
+qobj = assemble(transpiled_grover_circuit)
+results = sim.run(qobj).result()
+counts = results.get_counts()
+plot_histogram(counts)

@@ -1,0 +1,114 @@
+3. Multi Qubit Gates
+#importing modules
+from qiskit import assemble, QuantumCircuit
+from qiskit_aer import Aer
+from qiskit.visualization import plot_histogram, plot_bloch_multivector, array_to_latex
+from math import pi, sqrt
+import numpy as np
+
+# Create a quantum circuit for CNOT gate
+qc = QuantumCircuit(2)
+qc.cx(0, 1)
+qc.draw()
+
+
+# Continue from the previous cell
+# Create a quantum circuit for CZ gate
+qc = QuantumCircuit(2)
+qc.cz(0, 1)
+qc.draw()
+
+
+# Continue from the previous cell
+# Create a quantum circuit for SWAP gate
+qc = QuantumCircuit(2)
+qc.swap(0, 1)
+qc.draw()
+
+
+# Continue from the previous cell
+# Create a quantum circuit for Fredkin gate
+qc = QuantumCircuit(3)
+qc.cswap(0, 1, 2)
+qc.draw()
+
+
+# Continue from the previous cell
+# Create a quantum circuit for Toffoli gate
+qc = QuantumCircuit(3)
+qc.ccx(0, 1, 2)
+qc.draw()
+
+
+
+## COMMON FOR ALL GATES:
+
+
+# Visualize the state vector for the current 'qc'
+sim = Aer.get_backend('aer_simulator')
+qc.save_statevector()
+qobj = assemble(qc)
+
+##############
+
+state = sim.run(qobj).result().get_statevector()
+print("Statevector:", state)
+
+##############
+
+plot_bloch_multivector(state)
+
+##############
+
+array_to_latex(state, prefix="\\text{Statevector} = ")
+
+#representing multi qubits.
+qc = QuantumCircuit(3)
+for qubit in range(3):
+    qc.h(qubit)
+qc.draw()
+
+qc.save_statevector()
+qobj = assemble(qc)
+sim = Aer.get_backend('aer_simulator')
+result = sim.run(qobj).result()
+state = result.get_statevector()
+counts = result.get_counts()
+
+plot_bloch_multivector(state)
+
+
+from qiskit.visualization import array_to_latex
+array_to_latex(state, prefix = "\\text{Statevector} = ")
+
+# single qubit on a multiqubit statevector.
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.x(1)
+qc.draw()
+
+qc.save_unitary()
+qobj  = assemble(qc)
+result = sim.run(qobj).result().get_unitary()
+array_to_latex(result, prefix = "\\text{Circuit = }")
+
+# Multi Qubit gates.
+
+#CNOT gate 
+qc = QuantumCircuit(2)
+qc.h(0) ## this will lead to entangled state
+qc.cx(0,1)
+qc.draw()
+
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = sim.run(qobj).result().get_statevector()
+
+
+array_to_latex(final_state, prefix= "\\text{Statevector = }")
+
+
+plot_bloch_multivector(final_state)
+
+
+plot_histogram(sim.run(qobj).result().get_counts())

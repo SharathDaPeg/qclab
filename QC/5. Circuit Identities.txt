@@ -1,0 +1,120 @@
+5. Circuit Identities
+#importing libraries
+from qiskit import QuantumCircuit, assemble
+from qiskit_aer import Aer
+from math import pi, sqrt
+from qiskit.visualization import plot_bloch_multivector, plot_histogram, array_to_latex
+from qiskit.circuit import Gate
+
+sim = Aer.get_backend('aer_simulator')
+
+#orignal controlled-z
+qc = QuantumCircuit(2)
+qc.cz(0,1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(2)
+qc.h(1)
+qc.cx(0,1)
+qc.h(1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+#for controlled y
+qc = QuantumCircuit(2)
+qc.sdg(1)
+qc.cx(0,1)
+qc.s(1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+#controlled h
+qc = QuantumCircuit(2)
+qc.ry(pi/4,1)
+qc.cx(0,1)
+qc.ry(-pi/4,1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(2)
+qc.swap(0,1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(2)
+qc.cx(1,0)
+qc.cx(0,1)
+qc.cx(1,0)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(2)
+qc.cx(0,1)
+qc.cx(1,0)
+qc.cx(0,1)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+A = Gate('A', 1, [])
+B = Gate('B', 1, [])
+C = Gate('C', 1, [])
+alpha = 1 # arbitrarily define alpha to allow drawing of circuit
+t=1
+c=0
+qc = QuantumCircuit(2)
+qc.append(C, [t])
+qc.cz(c,t)
+qc.append(B, [t])
+qc.cz(c,t)
+qc.append(A, [t])
+qc.p(alpha,c)
+qc.draw()
+
+qc = QuantumCircuit(3)
+qc.ccx(0,1,2)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(3)
+qc.cp(pi,1,2)
+qc.cx(0,1)
+qc.cp(-pi,1,2)
+qc.cx(0,1)
+qc.cp(pi,0,2)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+circuit = sim.run(qobj).result().get_unitary()
+array_to_latex(circuit, prefix = "\\text{Circuit = }")
+
+qc = QuantumCircuit(1)
+qc.t(0)
+qc.h(0)
+qc.t(0)
+qc.h(0)
+qc.draw()

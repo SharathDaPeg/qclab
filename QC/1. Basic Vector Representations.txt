@@ -1,0 +1,37 @@
+1. Basic Vector Representations
+#importing libraries
+from qiskit import QuantumCircuit, assemble
+from qiskit_aer import Aer
+from qiskit.visualization import plot_histogram, plot_bloch_vector
+from math import sqrt, pi
+
+sim = Aer.get_backend('aer_simulator')
+qc = QuantumCircuit(1) # Create a quantum circuit with one qubit
+initial_state = [0,1] # Define initial_state as |1>
+qc.initialize(initial_state, 0) # Apply initialisation operation to the 0th qubit
+qc.save_statevector() # Tell simulator to save statevector
+qobj = assemble(qc) # Create a Qobj from the circuit for the simulator to run
+result = sim.run(qobj).result() # Do the simulation and return the result
+out_state = result.get_statevector()
+print(out_state) # Display the output state vector
+qc.measure_all()
+qc.draw()
+
+qobj = assemble(qc)
+result = sim.run(qobj).result()
+counts = result.get_counts()
+plot_histogram(counts)
+
+initial_state = [1/sqrt(3), 1j/sqrt(3/2)] # Define state |q_0>
+qc = QuantumCircuit(1) # Must redefine qc
+qc.initialize(initial_state, 0) # Initialize the 0th qubit in the state `initial_state`
+qc.save_statevector() # Save statevector
+qobj = assemble(qc)
+state = sim.run(qobj).result().get_statevector() # Execute the circuit
+print(state) # Print the result
+qc.measure_all()
+qc.draw()
+
+qobj = assemble(qc)
+results = sim.run(qobj).result().get_counts()
+plot_histogram(results)

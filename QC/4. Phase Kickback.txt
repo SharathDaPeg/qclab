@@ -1,0 +1,119 @@
+4. Phase Kickback
+#importing libraries
+from qiskit import QuantumCircuit, assemble
+from qiskit_aer import Aer
+from math import pi
+import numpy as np
+from qiskit.visualization import plot_bloch_multivector, plot_histogram, array_to_latex
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.h(1)
+qc.cx(0,1)
+display(qc.draw())
+svsim = Aer.get_backend('aer_simulator')
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+display(array_to_latex(final_state, prefix="\\text{Statevector} = "))
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.x(1)
+qc.h(1)
+display(qc.draw())
+# See the result
+qc1 = qc.copy()
+qc1.save_statevector()
+final_state = svsim.run(qc1).result().get_statevector()
+display(array_to_latex(final_state, prefix="\\text{Statevector} = "))
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.h(1)
+qc.cx(0,1)
+qc.h(0)
+qc.h(1)
+display(qc.draw())
+qc.save_unitary()
+usim = Aer.get_backend('aer_simulator')
+qobj = assemble(qc)
+unitary = usim.run(qobj).result().get_unitary()
+array_to_latex(unitary, prefix="\\text{Circuit = }\n")
+
+qc = QuantumCircuit(2)
+qc.cx(1,0)
+display(qc.draw())
+qc.save_unitary()
+qobj = assemble(qc)
+unitary = usim.run(qobj).result().get_unitary()
+array_to_latex(unitary, prefix="\\text{Circuit = }\n")
+
+qc = QuantumCircuit(2)
+qc.cp(pi/4, 0, 1)
+display(qc.draw())
+# See Results:
+qc.save_unitary()
+qobj = assemble(qc)
+unitary = usim.run(qobj).result().get_unitary()
+array_to_latex(unitary, prefix="\\text{Controlled-T} = \n")
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.x(1)
+display(qc.draw())
+# See Results:
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.x(1)
+# Add Controlled-T
+qc.cp(pi/4, 0, 1)
+display(qc.draw())
+# See Results:
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.h(0)
+# Add Controlled-T
+qc.cp(pi/4, 0, 1)
+display(qc.draw())
+# See Results:
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.h(0)
+qc.x(1)
+# Add Controlled-T
+qc.cp(-pi/2, 0, 1)
+display(qc.draw())
+# See Results:
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+plot_bloch_multivector(final_state)
+
+qc = QuantumCircuit(2)
+qc.x(0)
+qc.x(1)
+# Add Controlled-T
+qc.cp(pi/4, 0, 1)
+display(qc.draw())
+# See Results:
+qc.save_statevector()
+qobj = assemble(qc)
+final_state = svsim.run(qobj).result().get_statevector()
+plot_bloch_multivector(final_state)
+

@@ -1,0 +1,49 @@
+10. Teleportation
+#importing libraries
+from qiskit import QuantumCircuit, transpile, assemble
+from qiskit_aer import Aer
+from qiskit.visualization import plot_histogram, plot_bloch_multivector
+
+# Create a function to perform teleportation
+def teleportation_circuit():
+    # Create a quantum circuit with 3 qubits
+    qc = QuantumCircuit(3, 3)
+
+    # Prepare the initial state to be teleported
+    qc.h(0)  # Apply Hadamard gate to the first qubit
+    qc.cx(0, 1)  # Apply CNOT gate to create an entangled state
+
+    # Entangled pair (Bell state) is shared between Alice (qubit 1) and Bob (qubit 2)
+
+    # Apply a gate to the qubit to be teleported (qubit 0)
+    qc.z(0)
+    qc.x(0)
+
+    # Perform a Bell measurement on qubits 0 and 1
+    qc.cx(0, 1)
+    qc.h(0)
+    
+    # Measure qubits 0 and 1
+    qc.measure([0, 1], [0, 1])
+
+    # Apply classical controlled gates based on the measurement results
+    qc.cx(1, 2)
+    qc.cz(0, 2)
+
+    return qc
+
+# Run the teleportation circuit
+teleportation_qc = teleportation_circuit()
+
+# Visualize the circuit
+teleportation_qc.draw()
+
+# Simulate the circuit
+simulator = Aer.get_backend('aer_simulator')
+qobj = assemble(teleportation_qc)
+result = simulator.run(qobj).result()
+
+# Display the result
+print("Teleportation Circuit Result:")
+print(result.get_counts())
+plot_histogram(result.get_counts())
